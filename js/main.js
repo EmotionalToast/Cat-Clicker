@@ -1,9 +1,12 @@
+//Set the buy spans
 let oneSpan = document.getElementById("oneSpan");
 let tenSpan = document.getElementById("tenSpan");
 let maxSpan = document.getElementById("maxSpan");
 
+//Set the initial buy span amount to one
 buyAmount('1');
 
+//Check if first time
 if(localStorage.getItem("cats") == null){
     console.log("Created cats variable");
 
@@ -19,7 +22,7 @@ if(localStorage.getItem("cats") == null){
     localStorage.setItem("yarnMultiplier", "1");
 }
 
-
+//Grab the items from storage
 let cats = parseFloat(localStorage.getItem("cats"));
 
 let mouses = parseFloat(localStorage.getItem("mouses"));
@@ -30,9 +33,12 @@ let yarn = parseFloat(localStorage.getItem("yarn"));
 let yarnCost = parseFloat(localStorage.getItem("yarnCost"));
 let yarnMultiplier = parseFloat(localStorage.getItem("yarnMultiplier"));
 
+//Set functions
 setCats();
 setMouses();
 setYarn();
+
+
 
 //On load function
 window.onload = (event) => {
@@ -56,18 +62,16 @@ window.onload = (event) => {
 
 //Game Functions
 function gameLoop(){
-    mouseProductionEquation = Math.floor((1 * mouses) * mouseMultiplier);
-    yarnProductionEquation = Math.floor((2 * yarn) * yarnMultiplier);
-
     window.setInterval(function(){
         if(localStorage.getItem("cats") !== null){
             console.log("GAME LOOP IS ON!!!");
 
-            getCats(mouseProductionEquation);
-            getCats(yarnProductionEquation);
+            getCats(Math.floor((1 * mouses) * mouseMultiplier));
+            getCats(Math.floor((2 * yarn) * yarnMultiplier));
         }
     }, 1000);
 }
+
 
 function getCats(newCats) {
     cats = cats + newCats;
@@ -85,6 +89,7 @@ function buyMouse(mouseBuyAmount){
         setMouses();
     }
 }
+
 
 function buyYarn(yarnBuyAmount){
     if(cats >= yarnCost){
@@ -122,6 +127,7 @@ function setYarn(){
     localStorage.setItem("yarn", yarn);
     localStorage.setItem("yarnCost", yarnCost);
 }
+
 
 function buyAmount(amountToBuy) {
     if(amountToBuy == '1'){
