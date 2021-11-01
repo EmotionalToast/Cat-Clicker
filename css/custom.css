@@ -48,7 +48,7 @@ header {
 }
 
 /* CLICKING DIV STYLE */
-#catClicking{
+#catClicking {
     width: 70%;
 }
 
@@ -61,6 +61,22 @@ header {
     border-left: 10px solid #9d1bd1;
 
     width: 30%;
+    overflow: auto;
+}
+
+#amountToBuyDiv {
+    text-align: end;
+    overflow: auto;
+}
+
+#amountToBuyDiv span {
+    border: 3px solid rgb(42, 42, 42);
+    background-color: rgb(42, 42, 42);
+    border-radius: 5px;
+
+    cursor: pointer;
+    padding: 5px;
+    margin: auto;
 }
 
 #buyDiv {
@@ -115,7 +131,7 @@ header {
     border: none;
     border-radius: 15px;
     box-shadow: 0 9px rgb(110, 22, 182);
-    transition: 0.1s;
+    transition: 0.05s;
 }
   
 .button:hover {
