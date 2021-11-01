@@ -6,7 +6,14 @@ let maxSpan = document.getElementById("maxSpan");
 //Set the initial buy span amount to one
 buyAmount('1');
 
-//Check if first time
+
+
+//On load function
+window.onload = (event) => {
+    if(localStorageTest() === true){
+        console.log("LOCAL STORAGE IS ON!!!");
+        document.getElementById("content").style = "display: flex;";
+        //Check if first time
 if(localStorage.getItem("cats") == null){
     console.log("Created cats variable");
 
@@ -23,29 +30,20 @@ if(localStorage.getItem("cats") == null){
 }
 
 //Grab the items from storage
-let cats = parseFloat(localStorage.getItem("cats"));
+cats = parseFloat(localStorage.getItem("cats"));
 
-let mouses = parseFloat(localStorage.getItem("mouses"));
-let mouseCost = parseFloat(localStorage.getItem("mouseCost"));
-let mouseMultiplier = parseFloat(localStorage.getItem("mouseMultiplier"));
+mouses = parseFloat(localStorage.getItem("mouses"));
+mouseCost = parseFloat(localStorage.getItem("mouseCost"));
+mouseMultiplier = parseFloat(localStorage.getItem("mouseMultiplier"));
 
-let yarn = parseFloat(localStorage.getItem("yarn"));
-let yarnCost = parseFloat(localStorage.getItem("yarnCost"));
-let yarnMultiplier = parseFloat(localStorage.getItem("yarnMultiplier"));
+yarn = parseFloat(localStorage.getItem("yarn"));
+yarnCost = parseFloat(localStorage.getItem("yarnCost"));
+yarnMultiplier = parseFloat(localStorage.getItem("yarnMultiplier"));
 
 //Set functions
 setCats();
 setMouses();
 setYarn();
-
-
-
-//On load function
-window.onload = (event) => {
-    if(localStorageTest() === true){
-        console.log("LOCAL STORAGE IS ON!!!");
-        document.getElementById("content").style = "display: flex;";
-
         gameLoop();
 
         console.log("ALL LOADED!!!");
@@ -63,12 +61,10 @@ window.onload = (event) => {
 //Game Functions
 function gameLoop(){
     window.setInterval(function(){
-        if(localStorage.getItem("cats") !== null){
-            console.log("GAME LOOP IS ON!!!");
+        console.log("GAME LOOP IS ON!!!");
 
-            getCats(Math.floor((1 * mouses) * mouseMultiplier));
-            getCats(Math.floor((2 * yarn) * yarnMultiplier));
-        }
+        getCats(Math.floor((1 * mouses) * mouseMultiplier));
+        getCats(Math.floor((2 * yarn) * yarnMultiplier));
     }, 1000);
 }
 
