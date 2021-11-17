@@ -1,11 +1,3 @@
-//Set the buy spans
-let oneSpan = document.getElementById("oneSpan");
-let tenSpan = document.getElementById("tenSpan");
-let maxSpan = document.getElementById("maxSpan");
-
-//Set the initial buy span amount to one
-buyAmount('1');
-
 //Check if first time
 if(localStorage.getItem("cats") == null){
     console.log("Created cats variable");
@@ -38,15 +30,13 @@ setCats();
 setMouses();
 setYarn();
 
-
-
 //On load function
 window.onload = (event) => {
     if(localStorageTest() === true){
         console.log("LOCAL STORAGE IS ON!!!");
         document.getElementById("content").style = "display: flex;";
 
-        gameLoop();
+        startLoop();
 
         console.log("ALL LOADED!!!");
     }
@@ -59,22 +49,48 @@ window.onload = (event) => {
 
 
 
+let lastTime = null;
+let totalTime = 0;
 
 //Game Functions
-function gameLoop(){
-    window.setInterval(function(){
+function startLoop(){
+    setInterval(function gameLoop(){
+        //Just so when I delete the local storage for testing it doesnt keep going up
         if(localStorage.getItem("cats") !== null){
-            console.log("GAME LOOP IS ON!!!");
+            const currentTime = Date.now();
+            if(lastTime == null){
+                lastTime = currentTime;
+            }
 
-            getCats(Math.floor((1 * mouses) * mouseMultiplier));
-            getCats(Math.floor((2 * yarn) * yarnMultiplier));
+            const deltaTime = currentTime - lastTime;
+            totalTime += deltaTime;
+            lastTime = currentTime;
+            updateGame(deltaTime, totalTime);
         }
-    }, 1000);
+    }, 1000 / 60);
+}
+
+
+const mouseCurrencyPerMillisecond = 0.0005;
+const yarnCurrencyPerMillisecond = 0.002;
+
+let gameSaveTime = 0;
+
+function updateGame(deltaTime, totalTime){
+    const timeSinceLastSave = totalTime - gameSaveTime;
+    if(timeSinceLastSave >= 5000){
+        gameSaveTime = totalTime;
+    }
+    
+    cats += ((mouseCurrencyPerMillisecond * mouses) * mouseMultiplier) * deltaTime;
+    cats += ((yarnCurrencyPerMillisecond * yarn) * yarnMultiplier) * deltaTime;
+
+    setCats();
 }
 
 
 function getCats(newCats) {
-    cats = cats + newCats;
+    cats += newCats;
     setCats();
 }
 
@@ -84,12 +100,11 @@ function buyMouse(mouseBuyAmount){
         setCats();
 
         mouses = mouses + mouseBuyAmount;
-        mouseCost = Math.floor(10 * Math.pow(1.15, mouses));
+        mouseCost = Math.floor(10 * Math.pow(1.07, mouses));
 
         setMouses();
     }
 }
-
 
 function buyYarn(yarnBuyAmount){
     if(cats >= yarnCost){
@@ -104,11 +119,9 @@ function buyYarn(yarnBuyAmount){
 }
 
 
-
-
 //Set amounts for each item
 function setCats(){
-    document.getElementById("catAmount").innerHTML = cats.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    document.getElementById("catAmount").innerHTML = cats.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     localStorage.setItem("cats", cats);
 }
 
@@ -129,6 +142,14 @@ function setYarn(){
 }
 
 
+//Set the buy spans
+let oneSpan = document.getElementById("oneSpan");
+let tenSpan = document.getElementById("tenSpan");
+let maxSpan = document.getElementById("maxSpan");
+
+//Set the initial buy span amount to one
+buyAmount('1');
+
 function buyAmount(amountToBuy) {
     if(amountToBuy == '1'){
         oneSpan.style = "color: #9d1bd1";
@@ -146,9 +167,6 @@ function buyAmount(amountToBuy) {
         maxSpan.style = "color: #9d1bd1";
     }
 }
-
-
-
 
 
 //Check if local storage is turned on
