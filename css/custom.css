@@ -79,6 +79,11 @@ header {
     margin: auto;
 }
 
+#amountToBuyDiv span:hover {
+    color:#9d1bd1 !important;
+    transition: 0.5s;
+}
+
 #buyDiv {
     border: 5px solid rgb(42, 42, 42);
     border-radius: 5px;
@@ -142,4 +147,8 @@ header {
     background-color: #8416af;
     box-shadow: 0 5px rgb(110, 22, 182);
     transform: translateY(4px);
+}
+
+.buttonDeactive {
+
 }

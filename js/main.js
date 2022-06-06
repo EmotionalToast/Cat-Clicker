@@ -16,6 +16,7 @@ if(localStorage.getItem("cats") == null){
 
 //Grab the items from storage
 let cats = parseFloat(localStorage.getItem("cats"));
+let clickMultipler = parseFloat(localStorage.getItem("clickMultipler"));
 
 let mouses = parseFloat(localStorage.getItem("mouses"));
 let mouseCost = parseFloat(localStorage.getItem("mouseCost"));
@@ -47,13 +48,13 @@ window.onload = (event) => {
     }
 }
 
-
-
 let lastTime = null;
 let totalTime = 0;
 
 //Game Functions
 function startLoop(){
+    console.log("LOOP STARTED!!!");
+
     setInterval(function gameLoop(){
         //Just so when I delete the local storage for testing it doesnt keep going up
         if(localStorage.getItem("cats") !== null){
@@ -70,27 +71,38 @@ function startLoop(){
     }, 1000 / 60);
 }
 
-
-const mouseCurrencyPerMillisecond = 0.0005;
+const mouseCurrencyPerMillisecond = 0.001;
 const yarnCurrencyPerMillisecond = 0.002;
 
 let gameSaveTime = 0;
 
 function updateGame(deltaTime, totalTime){
     const timeSinceLastSave = totalTime - gameSaveTime;
-    if(timeSinceLastSave >= 5000){
+    if(timeSinceLastSave >= 10000){
         gameSaveTime = totalTime;
+        saveGame();
     }
-    
-    cats += ((mouseCurrencyPerMillisecond * mouses) * mouseMultiplier) * deltaTime;
-    cats += ((yarnCurrencyPerMillisecond * yarn) * yarnMultiplier) * deltaTime;
+
+    cats += ((mouseCurrencyPerMillisecond * mouses) * (mouseMultiplier + Math.floor(mouses / 5))) * deltaTime;
+    cats += ((yarnCurrencyPerMillisecond * yarn) * (yarnMultiplier + Math.floor(yarn / 5))) * deltaTime;
 
     setCats();
+    setMouses();
+    setYarn();
+
+    setButtons();
 }
 
+function saveGame(){
+    console.log("SAVED!!!");
+}
+
+function setButtons(){
+    
+}
 
 function getCats(newCats) {
-    cats += newCats;
+    cats += newCats * clickMultipler;
     setCats();
 }
 
@@ -118,7 +130,6 @@ function buyYarn(yarnBuyAmount){
     }
 }
 
-
 //Set amounts for each item
 function setCats(){
     document.getElementById("catAmount").innerHTML = cats.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -141,7 +152,6 @@ function setYarn(){
     localStorage.setItem("yarnCost", yarnCost);
 }
 
-
 //Set the buy spans
 let oneSpan = document.getElementById("oneSpan");
 let tenSpan = document.getElementById("tenSpan");
@@ -155,19 +165,63 @@ function buyAmount(amountToBuy) {
         oneSpan.style = "color: #9d1bd1";
         tenSpan.style = "color: rgb(246, 254, 255)";
         maxSpan.style = "color: rgb(246, 254, 255)";
+
+        document.getElementById("mouseToBuy").innerHTML = "1";
+        document.getElementById("mouseBuyButton").setAttribute("onclick", "buyMouse(1)");
+        
+        mouseCost = Math.floor(10 * Math.pow(1.07, mouses));
+
+
+        document.getElementById("yarnToBuy").innerHTML = "1";
+        document.getElementById("yarnBuyButton").setAttribute("onclick", "buyYarn(1)");
+
+        yarnCost = Math.floor(500 * Math.pow(1.5, yarn));
     }
     else if(amountToBuy == '10'){
         oneSpan.style = "color: rgb(246, 254, 255)";
         tenSpan.style = "color: #9d1bd1";
         maxSpan.style = "color: rgb(246, 254, 255)";
+
+        document.getElementById("mouseToBuy").innerHTML = "10";
+        document.getElementById("mouseBuyButton").setAttribute("onclick", "buyMouse(10)");
+
+        mouseCost = Math.floor((10 * Math.pow(1.07, mouses)) * 10);
+
+
+        document.getElementById("yarnToBuy").innerHTML = "10";
+        document.getElementById("yarnBuyButton").setAttribute("onclick", "buyYarn(10)");
+
+        yarnCost = Math.floor((500 * Math.pow(1.5, yarn)) * 10);
     }
     else if(amountToBuy == 'Max'){
         oneSpan.style = "color: rgb(246, 254, 255)";
         tenSpan.style = "color: rgb(246, 254, 255)";
         maxSpan.style = "color: #9d1bd1";
+
+        maxMousesCanAfford = Math.floor((Math.log((((cats * (1.07 - 1)) / (10 * (1.07 ** mouses ))) + 1))) / (Math.log(1.07)));
+
+        document.getElementById("mouseToBuy").innerHTML = maxMousesCanAfford;
+        document.getElementById("mouseBuyButton").setAttribute("onclick", "buyMouse(" + maxMousesCanAfford + ")");
+
+        mouseCost = Math.floor(10 * ( ( (1.07 ** mouses) * ( (1.07 ** maxMousesCanAfford) - 1 )) / (1.07 - 1) ));
+        if(mouseCost < 10){
+            mouseCost = Math.floor(10 * Math.pow(1.07, mouses));
+            document.getElementById("mouseToBuy").innerHTML = "1";
+        }
+
+
+        maxYarnCanAfford = Math.floor((Math.log((((cats * (1.5 - 1)) / (500 * (1.5 ** yarn ))) + 1))) / (Math.log(1.5)));
+
+        document.getElementById("yarnToBuy").innerHTML = maxYarnCanAfford;
+        document.getElementById("yarnBuyButton").setAttribute("onclick", "buyYarn(" + maxYarnCanAfford + ")");
+
+        yarnCost = Math.floor(500 * ( ( (1.5 ** yarn) * ( (1.5 ** maxYarnCanAfford) - 1 )) / (1.5 - 1) ));
+        if(yarn < 500){
+            yarnCost = Math.floor(500 * Math.pow(1.5, yarn));
+            document.getElementById("yarnToBuy").innerHTML = "1";
+        }
     }
 }
-
 
 //Check if local storage is turned on
 function localStorageTest(){
